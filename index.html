@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#173f35">
+  <title>Deeper Life Bible Church, Ottawa West</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <section class="auth-screen" id="authScreen">
+    <div class="auth-panel">
+      <div class="auth-brand"><span class="brand-mark">DL</span><span><strong>Deeper Life Bible Church</strong><small>Ottawa West Reporting Portal</small></span></div>
+      <p class="kicker">SECURE TEAM ACCESS</p>
+      <h1>Sign in to continue</h1>
+      <p class="auth-copy">Attendance, member care, and reports are shared securely with your authorized team.</p>
+      <form id="loginForm">
+        <label>Email address<input name="email" type="email" autocomplete="email" required placeholder="you@example.com"></label>
+        <label>Password<input name="password" type="password" autocomplete="current-password" required placeholder="Enter your password"></label>
+        <p class="auth-error" id="authError"></p>
+        <button class="btn btn-primary full" type="submit">Sign in securely</button>
+      </form>
+      <div class="setup-message" id="setupMessage" hidden><strong>Supabase setup is required</strong><p>Add your project URL and publishable key to <code>config.js</code>, then reload this page.</p></div>
+      <small class="security-note">Accounts are created or invited by the church administrator.</small>
+    </div>
+    <div class="auth-art"><div><p>“Let all things be done decently and in order.”</p><span>1 Corinthians 14:40</span></div></div>
+  </section>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#dashboard" aria-label="Deeper Life Bible Church, Ottawa West home">
+        <span class="brand-mark">OW</span>
+        <span><strong>Deeper Life Bible Church</strong><small>Ottawa West</small></span>
+      </a>
+      <nav class="nav-list" aria-label="Main navigation">
+        <button class="nav-item active" data-view="dashboard"><span>⌂</span> Overview</button>
+        <button class="nav-item" data-view="attendance"><span>✓</span> Attendance</button>
+        <button class="nav-item" data-view="people"><span>♙</span> People</button>
+        <button class="nav-item" data-view="followup"><span>↗</span> Follow-up</button>
+        <button class="nav-item" data-view="reports"><span>▥</span> Reports</button>
+        <button class="nav-item admin-only" data-view="team"><span>♙</span> Team & roles</button>
+      </nav>
+      <div class="sidebar-foot">
+        <div class="verse-mark">“Let all things be done decently and in order.”</div>
+        <div class="profile"><span class="avatar" id="profileAvatar">DL</span><span><strong id="profileName">Team member</strong><small id="profileRole">Secure account</small></span><button class="logout-btn" id="logoutButton" title="Sign out" aria-label="Sign out">↪</button></div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="mobile-menu" aria-label="Open menu">☰</button>
+        <div class="eyebrow" id="todayLabel"></div>
+        <div class="top-actions">
+          <button class="icon-btn" id="themeToggle" aria-label="Toggle theme">☼</button>
+          <button class="btn btn-primary" data-open="attendanceModal">＋ Record attendance</button>
+        </div>
+      </header>
+
+      <section class="view active" id="dashboard">
+        <div class="hero-row">
+          <div><p class="kicker">CHURCH PULSE</p><h1>Good to see you.</h1><p class="lede">Here’s how Deeper Life Bible Church, Ottawa West is growing and staying connected.</p></div>
+          <div class="period-control"><button class="active">4 weeks</button><button>3 months</button><button>Year</button></div>
+        </div>
+        <div class="stats-grid" id="statsGrid"></div>
+        <div class="dashboard-grid">
+          <article class="card attendance-card">
+            <div class="card-head"><div><p class="kicker">ATTENDANCE TREND</p><h2 id="dashboardChartTitle">Service participation</h2><p class="dashboard-period-note" id="dashboardPeriodInfo"></p></div><span class="trend-pill" id="dashboardPeriodPill">Last 4 weeks</span></div>
+            <div class="chart-wrap"><svg id="attendanceChart" viewBox="0 0 760 240" role="img" aria-label="Attendance trend chart"></svg></div>
+            <div class="chart-legend"><span><i class="dot green"></i>Total attendance</span><span><i class="dot gold"></i>Visitors</span></div>
+          </article>
+          <article class="card service-card">
+            <div class="card-head"><div><p class="kicker">NEXT SERVICE</p><h2>Monday Bible Study</h2></div><span class="date-tile"><b>22</b><small>JUN</small></span></div>
+            <p class="service-time">6:00 PM – 8:00 PM</p>
+            <div class="topic-box"><small>TOPIC</small><strong>Growing in grace and knowledge</strong><span>Speaker to be confirmed</span></div>
+            <button class="btn btn-soft full" data-open="attendanceModal">Prepare attendance</button>
+          </article>
+        </div>
+        <div class="dashboard-grid lower">
+          <article class="card">
+            <div class="card-head"><div><p class="kicker">RECENT SERVICES</p><h2>Latest records</h2></div><button class="text-btn" data-go="attendance">View all →</button></div>
+            <div id="recentServices" class="service-list"></div>
+          </article>
+          <article class="card follow-card">
+            <div class="card-head"><div><p class="kicker">CARE & CONNECTION</p><h2>Follow-up needed</h2></div><span class="count-badge" id="followCount">0</span></div>
+            <div id="followPreview"></div>
+            <button class="btn btn-ink full" data-go="followup">Open follow-up list</button>
+          </article>
+        </div>
+      </section>
+
+      <section class="view" id="attendance">
+        <div class="page-head"><div><p class="kicker">SERVICE RECORDS</p><h1>Attendance</h1><p>Record services and keep every count in one place.</p></div><button class="btn btn-primary" data-open="attendanceModal">＋ New record</button></div>
+        <div class="toolbar card"><div class="search"><span>⌕</span><input id="attendanceSearch" placeholder="Search by service, topic, or speaker"></div><select id="attendanceTypeFilter"><option value="all">All service types</option><option>Sunday Worship</option><option>Monday Bible Study</option><option>Thursday Revival Hour</option><option>Special Programme</option></select></div>
+        <article class="card special-program-card">
+          <div>
+            <p class="kicker">SPECIAL PROGRAMME REPORT</p>
+            <h2>Bori and Ahoada Ministerial Renewal Report</h2>
+            <p class="lede">Abuja, Gboko and Otukpo GCK starting today.</p>
+          </div>
+          <div class="special-program-actions">
+            <button class="btn btn-soft" id="exportBoriAhoadaCsv" type="button">Export CSV</button>
+            <a class="btn btn-primary" target="_blank" rel="noopener noreferrer" href="https://deeperpastor-my.sharepoint.com/:x:/g/personal/national_deeperpastor_onmicrosoft_com/IQAe7aJh-zFhTrjddngf8YB3AUEPNidAdWOFbfRpbgUKbn8?e=KaZg0o">Open report</a>
+          </div>
+        </article>
+        <div class="attendance-groups" id="attendanceRecords"></div>
+      </section>
+
+      <section class="view" id="people">
+        <div class="page-head"><div><p class="kicker">CHURCH FAMILY</p><h1>People</h1><p>Members and visitors, with the details needed to care well.</p></div><button class="btn btn-primary" data-open="personModal">＋ Add person</button></div>
+        <div class="people-tabs"><button class="active" data-person-filter="all">Everyone <span id="allCount"></span></button><button data-person-filter="Member">Members <span id="memberCount"></span></button><button data-person-filter="Visitor">Visitors <span id="visitorCount"></span></button></div>
+        <div class="toolbar card"><div class="search"><span>⌕</span><input id="peopleSearch" placeholder="Search name, phone, or group"></div><select id="groupFilter"><option value="all">All groups</option><option>Men</option><option>Women</option><option>Youth</option><option>Children</option><option>Campus</option></select></div>
+        <div class="people-table-wrap card"><table class="people-table"><thead><tr><th>Person</th><th>Type</th><th>Group</th><th>Last seen</th><th>Connection</th><th></th></tr></thead><tbody id="peopleRows"></tbody></table></div>
+      </section>
+
+      <section class="view" id="followup">
+        <div class="page-head"><div><p class="kicker">CARE & CONNECTION</p><h1>Follow-up</h1><p>Simple reminders so nobody quietly slips through the cracks.</p></div></div>
+        <div class="follow-layout">
+          <div><div class="section-label"><h2>Needs attention</h2><span id="needsCount"></span></div><div id="followList" class="follow-list"></div></div>
+          <aside class="card care-note"><div class="care-icon">♡</div><h2>Care notes</h2><p>Record a call, visit, prayer, or encouragement. Completed follow-ups stay in the person’s history.</p><div class="mini-rule"></div><strong>Suggested rhythm</strong><ul><li>Visitors: within 48 hours</li><li>Absent members: within 7 days</li><li>Prayer requests: as needed</li></ul></aside>
+        </div>
+      </section>
+
+      <section class="view" id="reports">
+        <div class="page-head"><div><p class="kicker">INSIGHTS & EXPORTS</p><h1>Reports</h1><p>Turn service records into clear ministry updates.</p></div><button class="btn btn-primary" id="printReport">Print report</button></div>
+        <div class="report-controls card"><label>From <input type="date" id="reportFrom" value="2025-09-01"></label><label>To <input type="date" id="reportTo" value="2026-06-30"></label><button class="btn btn-soft" id="exportCsv">Export CSV</button><button class="btn btn-primary" id="seniorReportPdf">Senior report PDF</button></div>
+        <div class="report-summary" id="reportSummary"></div>
+        <div class="dashboard-grid">
+          <article class="card"><p class="kicker">ATTENDANCE MIX</p><h2>By group</h2><div id="groupBars" class="group-bars"></div></article>
+          <article class="card"><p class="kicker">SERVICE COMPARISON</p><h2>Average attendance</h2><div id="serviceBars" class="group-bars"></div></article>
+        </div>
+        <article class="card report-table-card"><div class="card-head"><div><p class="kicker">REPORT DETAIL</p><h2>Service history</h2></div></div><div class="people-table-wrap"><table class="people-table report-table"><thead><tr><th>Date</th><th>Service</th><th>Topic</th><th>Written report &amp; summary</th><th>Members</th><th>Visitors</th><th>Total</th><th>Offering</th></tr></thead><tbody id="reportRows"></tbody></table></div></article>
+      </section>
+
+      <section class="view" id="team">
+        <div class="page-head"><div><p class="kicker">ACCESS CONTROL</p><h1>Team & roles</h1><p>Manage what signed-in team members can see and change.</p></div><button class="btn btn-soft" id="importHistoryButton">Import historical records</button></div>
+        <div class="role-explainer"><article class="card"><strong>Administrator</strong><p>Full access, including roles and deletions.</p></article><article class="card"><strong>Reporter</strong><p>Can submit and update church records.</p></article><article class="card"><strong>Viewer</strong><p>Can securely view reports without editing.</p></article></div>
+        <div class="people-table-wrap card"><table class="people-table"><thead><tr><th>Team member</th><th>Email</th><th>Role</th><th>Joined</th></tr></thead><tbody id="teamRows"></tbody></table></div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="attendanceModal" role="dialog" aria-modal="true" aria-labelledby="attendanceModalTitle">
+    <div class="modal"><div class="modal-head"><div><p class="kicker">NEW SERVICE RECORD</p><h2 id="attendanceModalTitle">Record attendance</h2></div><button class="close-btn" data-close aria-label="Close">×</button></div>
+      <form id="attendanceForm">
+        <div class="form-grid"><label>Service type<select name="type" required><option>Sunday Worship</option><option>Monday Bible Study</option><option>Thursday Revival Hour</option><option>Special Programme</option></select></label><label>Date<input name="date" type="date" required></label></div>
+        <label>Topic or theme<input name="topic" required placeholder="Enter the message topic"></label><label>Speaker<input name="speaker" placeholder="Name of preacher or leader"></label>
+        <div class="form-section"><div><strong>Attendance breakdown</strong><small>Enter the number present in each group.</small></div><div class="count-grid"><label>Men<input name="men" type="number" min="0" value="0"></label><label>Women<input name="women" type="number" min="0" value="0"></label><label>Youth<input name="youth" type="number" min="0" value="0"></label><label>Children<input name="children" type="number" min="0" value="0"></label><label>Campus<input name="campus" type="number" min="0" value="0"></label><label>Visitors<input name="visitors" type="number" min="0" value="0"></label></div></div>
+        <div class="form-grid"><label>Offering (CAD)<input name="offering" type="number" min="0" step="0.01" placeholder="0.00"></label><label>End time<input name="endTime" type="time"></label></div>
+        <label>Written report &amp; summary<textarea name="notes" rows="5" placeholder="Write the service summary, key message points, decisions, announcements, testimonies, visitation, and follow-up notes..."></textarea></label>
+        <div class="form-actions"><button type="button" class="btn btn-ghost" data-close>Cancel</button><button class="btn btn-primary" type="submit">Save attendance</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="personModal" role="dialog" aria-modal="true" aria-labelledby="personModalTitle">
+    <div class="modal small"><div class="modal-head"><div><p class="kicker">PEOPLE DIRECTORY</p><h2 id="personModalTitle">Add a person</h2></div><button class="close-btn" data-close aria-label="Close">×</button></div>
+      <form id="personForm"><div class="form-grid"><label>First name<input name="firstName" required></label><label>Last name<input name="lastName" required></label></div><div class="form-grid"><label>Type<select name="type"><option>Member</option><option>Visitor</option></select></label><label>Group<select name="group"><option>Men</option><option>Women</option><option>Youth</option><option>Children</option><option>Campus</option></select></label></div><label>Phone<input name="phone" type="tel" placeholder="(613) 555-0100"></label><label>Email<input name="email" type="email" placeholder="name@example.com"></label><label>Notes<textarea name="notes" rows="3" placeholder="Prayer request, first visit, care details..."></textarea></label><div class="form-actions"><button type="button" class="btn btn-ghost" data-close>Cancel</button><button class="btn btn-primary" type="submit">Add person</button></div></form>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="history-data.js"></script>
+  <script src="people-data.js"></script>
+  <script src="app.js"></script>
+  <script src="supabase-app.js"></script>
+</body>
+</html>
