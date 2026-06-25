@@ -1,0 +1,19 @@
+{
+  "name": "Deeper Life Bible Church Ottawa West Reporting Portal",
+  "short_name": "DLBC Ottawa West",
+  "description": "Attendance, reporting, members, visitors, and follow-up portal for Deeper Life Bible Church, Ottawa West.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f1e8",
+  "theme_color": "#173f35",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
