@@ -14,9 +14,11 @@ const seedServices=[
 ];
 const seedPeople=window.OW_PEOPLE_HISTORY||[];
 const load=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))||fallback}catch{return fallback}};
-const importedServices=(window.OW_HISTORY||seedServices).map((s,i)=>({...s,id:s.id||`history-${i+1}`}));
 const storedServices=load('ow-services',[]);
-const manuallyAddedServices=storedServices.filter(s=>(typeof s.id==='number'&&s.id>1000000)||(typeof s.id==='string'&&!s.id.startsWith('history-')));
+const storedServiceMap=new Map(storedServices.map(s=>[String(s.id),s]));
+const importedServices=(window.OW_HISTORY||seedServices).map((s,i)=>{const base={...s,id:s.id||`history-${i+1}`};return storedServiceMap.has(String(base.id))?{...base,...storedServiceMap.get(String(base.id))}:base});
+const importedServiceIds=new Set(importedServices.map(s=>String(s.id)));
+const manuallyAddedServices=storedServices.filter(s=>!importedServiceIds.has(String(s.id)));
 let services=[...importedServices,...manuallyAddedServices],people=load('ow-people',seedPeople),personFilter='all',dashboardPeriod='4w';
 const save=()=>{localStorage.setItem('ow-services',JSON.stringify(services));localStorage.setItem('ow-people',JSON.stringify(people))};
 const total=s=>['men','women','youth','children','campus'].reduce((a,k)=>a+(+s[k]||0),0);

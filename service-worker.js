@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dlbc-ottawa-west-v4';
+const CACHE_NAME = 'dlbc-ottawa-west-v5';
 const APP_FILES = [
   './',
   './index.html',
