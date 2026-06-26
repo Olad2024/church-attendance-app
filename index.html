@@ -130,7 +130,7 @@
 
       <section class="view" id="reports">
         <div class="page-head"><div><p class="kicker">INSIGHTS & EXPORTS</p><h1>Reports</h1><p>Turn service records into clear ministry updates.</p></div><button class="btn btn-primary" id="printReport">Print report</button></div>
-        <div class="report-controls card"><label>From <input type="date" id="reportFrom" value="2025-09-01"></label><label>To <input type="date" id="reportTo" value="2026-06-30"></label><button class="btn btn-soft" id="exportCsv">Export CSV</button><button class="btn btn-primary" id="seniorReportPdf">Senior report PDF</button></div>
+        <div class="report-controls card"><label>From <input type="date" id="reportFrom" value="2025-09-01"></label><label>To <input type="date" id="reportTo" value="2026-06-30"></label><button class="btn btn-soft" id="exportCsv">Export CSV</button><button class="btn btn-soft" id="attendanceExcelReport">Attendance Report Excel</button><button class="btn btn-primary" id="seniorReportPdf">Senior report PDF</button></div>
         <div class="report-summary" id="reportSummary"></div>
         <div class="dashboard-grid">
           <article class="card"><p class="kicker">ATTENDANCE MIX</p><h2>By group</h2><div id="groupBars" class="group-bars"></div></article>
@@ -185,6 +185,7 @@
   <script src="config.js"></script>
   <script src="history-data.js"></script>
   <script src="people-data.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
   <script src="app.js"></script>
   <script src="supabase-app.js"></script>
   <script>

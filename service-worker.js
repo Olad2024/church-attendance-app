@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dlbc-ottawa-west-v2';
+const CACHE_NAME = 'dlbc-ottawa-west-v4';
 const APP_FILES = [
   './',
   './index.html',
@@ -8,6 +8,7 @@ const APP_FILES = [
   './config.js',
   './history-data.js',
   './people-data.js',
+  './attendance-template.xlsx',
   './manifest.webmanifest',
   './icon.svg'
 ];
