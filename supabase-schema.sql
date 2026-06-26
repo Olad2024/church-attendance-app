@@ -31,6 +31,7 @@ create table if not exists public.services (
   visitors integer not null default 0 check (visitors >= 0),
   offering numeric(12,2) not null default 0 check (offering >= 0),
   end_time time,
+  attendees jsonb not null default '[]'::jsonb,
   notes text not null default '',
   source text,
   created_by uuid not null default auth.uid() references auth.users(id),
@@ -38,6 +39,9 @@ create table if not exists public.services (
   updated_at timestamptz not null default now(),
   unique(service_date, service_type, topic)
 );
+
+alter table public.services
+  add column if not exists attendees jsonb not null default '[]'::jsonb;
 
 create table if not exists public.people (
   id uuid primary key default gen_random_uuid(),

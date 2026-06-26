@@ -24,7 +24,7 @@
     speaker: row.speaker, men: row.men, women: row.women, youth: row.youth,
     children: row.children, campus: row.campus, visitors: row.visitors,
     offering: Number(row.offering || 0), endTime: row.end_time || '', notes: row.notes,
-    source: row.source || ''
+    attendees: row.attendees || [], source: row.source || ''
   });
 
   const personFromDb = row => ({
@@ -57,8 +57,40 @@
     youth: Number(item.youth || 0), children: Number(item.children || 0),
     campus: Number(item.campus || 0), visitors: Number(item.visitors || 0),
     offering: Number(item.offering || 0), end_time: item.endTime || null,
-    notes: item.notes || '', source: item.source || null
+    attendees: item.attendees || [], notes: item.notes || '', source: item.source || null
   });
+
+  async function saveRegisterPeople(attendees, serviceDate) {
+    for (const attendee of attendees || []) {
+      const existing = people.find(person =>
+        String(person.id) === String(attendee.id) ||
+        person.name.trim().toLowerCase() === attendee.name.trim().toLowerCase()
+      );
+      if (existing) {
+        attendee.id = existing.id;
+        await db.from('people').update({
+          last_seen: serviceDate,
+          group_name: attendee.group || existing.group,
+          person_type: attendee.type || existing.type,
+          connection_status: (attendee.type || existing.type) === 'Visitor' ? 'Follow-up' : existing.status || 'Connected'
+        }).eq('id', existing.id);
+      } else {
+        const payload = {
+          full_name: attendee.name,
+          person_type: attendee.type || 'Member',
+          group_name: attendee.group || 'Men',
+          phone: '',
+          email: '',
+          last_seen: serviceDate,
+          connection_status: attendee.type === 'Visitor' ? 'Follow-up' : 'Connected',
+          notes: 'Added from attendance register'
+        };
+        const { data, error } = await db.from('people').insert(payload).select().single();
+        if (error) throw error;
+        attendee.id = data.id;
+      }
+    }
+  }
 
   async function syncRoster(roster) {
     const existingResult = await db.from('people').select('full_name');
@@ -191,14 +223,23 @@
     event.preventDefault();
     if (!['admin', 'reporter'].includes(userProfile?.role)) return;
     const form = event.currentTarget;
-    const item = Object.fromEntries(new FormData(form));
-    const { data, error } = await db.from('services').insert(serviceToDb(item)).select().single();
+    const item = prepareServiceFromForm(form);
+    try { await saveRegisterPeople(item.attendees, item.date); }
+    catch (error) { showToast(error.message); return; }
+    const existingId = item.id;
+    delete item.id;
+    const request = existingId
+      ? db.from('services').update(serviceToDb(item)).eq('id', existingId).select().single()
+      : db.from('services').insert(serviceToDb(item)).select().single();
+    const { data, error } = await request;
     if (error) { showToast(error.message); return; }
-    services.push(serviceFromDb(data));
-    renderSharedViews(); applyPermissions(); form.reset();
-    document.querySelector('input[name=date]').value = new Date().toISOString().slice(0, 10);
+    const saved = serviceFromDb(data);
+    const index = services.findIndex(service => String(service.id) === String(saved.id));
+    if (index > -1) services[index] = saved; else services.push(saved);
+    await loadSharedData();
+    resetAttendanceForm();
     document.querySelector('#attendanceModal').classList.remove('open');
-    showToast('Attendance saved to the shared database');
+    showToast(existingId ? 'Attendance updated in the shared database' : 'Attendance saved to the shared database');
   };
 
   document.querySelector('#personForm').onsubmit = async event => {

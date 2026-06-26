@@ -150,8 +150,23 @@
   <div class="modal-backdrop" id="attendanceModal" role="dialog" aria-modal="true" aria-labelledby="attendanceModalTitle">
     <div class="modal"><div class="modal-head"><div><p class="kicker">NEW SERVICE RECORD</p><h2 id="attendanceModalTitle">Record attendance</h2></div><button class="close-btn" data-close aria-label="Close">×</button></div>
       <form id="attendanceForm">
+        <input type="hidden" name="id">
+        <input type="hidden" name="attendeesJson" id="attendeesJson" value="[]">
         <div class="form-grid"><label>Service type<select name="type" required><option>Sunday Worship</option><option>Monday Bible Study</option><option>Thursday Revival Hour</option><option>Special Programme</option></select></label><label>Date<input name="date" type="date" required></label></div>
         <label>Topic or theme<input name="topic" required placeholder="Enter the message topic"></label><label>Speaker<input name="speaker" placeholder="Name of preacher or leader"></label>
+        <div class="form-section attendee-section"><div><strong>Attendee names / register</strong><small>Pick an existing member or add a new person. Group totals below can be updated automatically from this register.</small></div>
+          <div class="attendee-picker">
+            <label>Pick member or visitor<select id="attendeePersonSelect"><option value="">Choose a person...</option></select></label>
+            <button type="button" class="btn btn-soft" id="addSelectedAttendee">Add selected</button>
+          </div>
+          <div class="attendee-picker new-person-row">
+            <label>New person name<input id="newAttendeeName" placeholder="First and last name"></label>
+            <label>Group<select id="newAttendeeGroup"><option>Men</option><option>Women</option><option>Youth</option><option>Children</option><option>Campus</option></select></label>
+            <label>Type<select id="newAttendeeType"><option>Member</option><option>Visitor</option></select></label>
+            <button type="button" class="btn btn-soft" id="addNewAttendee">Add new</button>
+          </div>
+          <div class="attendee-list" id="attendanceNameList"><p class="lede">No names added yet.</p></div>
+        </div>
         <div class="form-section"><div><strong>Attendance breakdown</strong><small>Enter the number present in each group.</small></div><div class="count-grid"><label>Men<input name="men" type="number" min="0" value="0"></label><label>Women<input name="women" type="number" min="0" value="0"></label><label>Youth<input name="youth" type="number" min="0" value="0"></label><label>Children<input name="children" type="number" min="0" value="0"></label><label>Campus<input name="campus" type="number" min="0" value="0"></label><label>Visitors<input name="visitors" type="number" min="0" value="0"></label></div></div>
         <div class="form-grid"><label>Offering (CAD)<input name="offering" type="number" min="0" step="0.01" placeholder="0.00"></label><label>End time<input name="endTime" type="time"></label></div>
         <label>Written report &amp; summary<textarea name="notes" rows="5" placeholder="Write the service summary, key message points, decisions, announcements, testimonies, visitation, and follow-up notes..."></textarea></label>
